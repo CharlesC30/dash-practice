@@ -1,6 +1,7 @@
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
+import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output
 import pandas as pd
 
@@ -31,6 +32,30 @@ def generate_tree(treedict):
     )
 
 
+def generate_accordion(treedict):
+    return html.Div(
+        dbc.Accordion(
+            [
+                dbc.AccordionItem(
+                    [dbc.Accordion(
+                        [
+                            dbc.AccordionItem(
+                                "testing",
+                                title=item
+                            ) for item in treedict[k]
+                        ],
+                        start_collapsed=True,
+                        always_open=True
+                    )],
+                    title=k
+                ) for k in treedict
+            ],
+            start_collapsed=True,
+            always_open=True
+        )
+    )
+
+
 external_stylesheets = [
     {
         "href": "https://fonts.googleapis.com/css2?"  # external style sheet
@@ -39,7 +64,7 @@ external_stylesheets = [
     },
 ]
 
-app = dash.Dash(__name__, external_stylesheets=external_stylesheets)  # create instance of Dash class
+app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])  # create instance of Dash class
 server = app.server
 app.title = "Doosan Bears Stats: 곰들아!"  # set application title
 
@@ -62,7 +87,7 @@ app.layout = html.Div(  # define html parent component
             className="header",
         ),
 
-        generate_tree(treed),
+        generate_accordion(treed),
 
         html.Div(
             children=dcc.Graph(
