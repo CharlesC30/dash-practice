@@ -1,18 +1,35 @@
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
+from dash.dependencies import Input, Output
 import pandas as pd
-
-# import matplotlib.pyplot as plt
-
-# data = pd.read_csv("avocado.csv")
-# data = data.query("type == 'conventional' and region == 'Albany'")
-# data["Date"] = pd.to_datetime(data["Date"], format="%Y-%m-%d")
-# data.sort_values("Date", inplace=True)
 
 data = pd.read_csv("kbopitchingdata.csv")
 data = data.query("team == 'Doosan Bears'")
-print(list(data.columns))
+# print(list(data.columns))
+
+treed = {'group1': ['item1', 'item2'], 'group2': ['thing1', 'thing2']}
+
+
+def generate_tree(treedict):
+    return html.Div(
+        [
+            # detail tags allows for hidden component
+            html.Details(
+                [
+                    html.Summary(k),
+                    html.Div(
+                        [
+                            html.Details(
+                                html.Summary(item)
+                            ) for item in treedict[k]
+                        ], style={'text-indent': '2em'}
+                    )
+                ]
+            ) for k in treedict
+        ]
+    )
+
 
 external_stylesheets = [
     {
@@ -44,6 +61,9 @@ app.layout = html.Div(  # define html parent component
             ],
             className="header",
         ),
+
+        generate_tree(treed),
+
         html.Div(
             children=dcc.Graph(
                 id="win-loss",
